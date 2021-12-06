@@ -2,18 +2,21 @@ package com.example.testapp
 
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import kotlinx.android.synthetic.main.activity_main.*
+import com.example.testapp.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        btn_read_text.setOnClickListener {
+        binding.btnReadText.setOnClickListener {
             CameraActivity.start(this)
         }
 
-        btn_detect_face.setOnClickListener {
+        binding.btnDetectFace.setOnClickListener {
             CameraActivity.start(this)
         }
     }

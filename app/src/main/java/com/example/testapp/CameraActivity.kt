@@ -16,10 +16,10 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.example.testapp.databinding.ActivityCameraBinding
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
-import kotlinx.android.synthetic.main.activity_camera.*
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.concurrent.ExecutorService
@@ -30,11 +30,13 @@ class CameraActivity : AppCompatActivity() {
 
     private lateinit var outputDirectory: File
     private lateinit var cameraExecutor: ExecutorService
+    private lateinit var binding: ActivityCameraBinding
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_camera)
+        binding = ActivityCameraBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         // Request camera permissions
         if (allPermissionsGranted()) {
@@ -46,7 +48,7 @@ class CameraActivity : AppCompatActivity() {
         }
 
         // Set up the listener for take photo button
-        camera_capture_button.setOnClickListener { takePhoto() }
+        binding.cameraCaptureButton.setOnClickListener { takePhoto() }
 
         outputDirectory = getOutputDirectory()
 
@@ -112,7 +114,7 @@ class CameraActivity : AppCompatActivity() {
             val preview = Preview.Builder()
                 .build()
                 .also {
-                    it.setSurfaceProvider(viewFinder.surfaceProvider)
+                    it.setSurfaceProvider(binding.viewFinder.surfaceProvider)
                 }
 
             imageCapture = ImageCapture.Builder()
