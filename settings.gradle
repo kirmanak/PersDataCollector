@@ -1,2 +1,3 @@
 rootProject.name = "Test App"
 include ':app'
+include ':sdk'
