@@ -20,7 +20,9 @@
         <!-- To use multiple models: android:value="ocr,model2,model3" -->
 
         <activity android:name=".CameraActivity"/>
-        <activity android:name=".MainActivity">
+        <activity
+            android:name=".MainActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
