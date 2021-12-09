@@ -3,7 +3,7 @@ package com.example.testapp
 import android.Manifest
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
+import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
@@ -45,6 +45,9 @@ class CameraActivity : AppCompatActivity() {
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        if (requestCode == REQUEST_CODE_PERMISSIONS && grantResults.all { it == PERMISSION_GRANTED }) {
+            startCamera()
+        }
     }
 
     private fun takePhoto() {
