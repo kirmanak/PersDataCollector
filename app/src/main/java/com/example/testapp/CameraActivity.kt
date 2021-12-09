@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
@@ -51,9 +52,13 @@ class CameraActivity : AppCompatActivity() {
     private fun takePhoto() {
         val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
         // Set up image capture listener, which is triggered after photo has been taken
+        val textIdImageCapturedCallback = TextIdImageCapturedCallback(recognizer)
+        textIdImageCapturedCallback.lastRecognitionResult.observe(this) {
+            Toast.makeText(this, it.toString(), Toast.LENGTH_SHORT).show()
+        }
         imageCapture?.takePicture(
             ContextCompat.getMainExecutor(this),
-            TextIdImageCapturedCallback(recognizer)
+            textIdImageCapturedCallback,
         )
     }
 
