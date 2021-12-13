@@ -1,7 +1,6 @@
 package com.example.testapp
 
 import android.Manifest
-import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.os.Bundle
 import android.view.View
 import android.widget.Toast
@@ -9,8 +8,6 @@ import androidx.camera.core.CameraSelector
 import androidx.camera.core.ImageCapture
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
-import androidx.core.app.ActivityCompat.requestPermissions
-import androidx.core.content.ContextCompat.checkSelfPermission
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import by.kirich1409.viewbindingdelegate.viewBinding
@@ -18,6 +15,7 @@ import com.example.testapp.databinding.FmtTextRecognitionBinding
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
 import kotlinx.coroutines.guava.await
+import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -31,38 +29,19 @@ class TextRecognitionFragment : Fragment(R.layout.fmt_text_recognition) {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         cameraExecutor = Executors.newSingleThreadExecutor()
+        lifecycleScope.launch {
+            if (requestPermission(Manifest.permission.CAMERA)) {
+                startCamera()
+            } else {
+                Timber.w("onViewCreated: camera permission denied")
+            }
+        }
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         Timber.v("onViewCreated() called with: view = $view, savedInstanceState = $savedInstanceState")
         binding.cameraCaptureButton.setOnClickListener { takePhoto() }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        Timber.v("onResume() called")
-        // Request camera permissions
-        if (allPermissionsGranted()) {
-            lifecycleScope.launchWhenResumed { startCamera() }
-        } else {
-            Timber.i("onCreate: requesting camera permission")
-            requestPermissions(requireActivity(), REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
-        }
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        Timber.v("onRequestPermissionsResult() called with: requestCode = $requestCode, permissions = $permissions, grantResults = $grantResults")
-        if (requestCode == REQUEST_CODE_PERMISSIONS && grantResults.all { it == PERMISSION_GRANTED }) {
-            lifecycleScope.launchWhenResumed { startCamera() }
-        } else {
-            Timber.w("onRequestPermissionsResult: can't start camera, no permission")
-        }
     }
 
     private fun takePhoto() {
@@ -117,19 +96,5 @@ class TextRecognitionFragment : Fragment(R.layout.fmt_text_recognition) {
         Timber.v("onDestroy() called")
         cameraExecutor?.shutdownNow()
         cameraExecutor = null
-    }
-
-    private fun allPermissionsGranted(): Boolean {
-        Timber.v("allPermissionsGranted() called")
-        val all = REQUIRED_PERMISSIONS.all {
-            checkSelfPermission(requireContext(), it) == PERMISSION_GRANTED
-        }
-        Timber.v("allPermissionsGranted() returned: $all")
-        return all
-    }
-
-    companion object {
-        private const val REQUEST_CODE_PERMISSIONS = 10
-        private val REQUIRED_PERMISSIONS = arrayOf(Manifest.permission.CAMERA)
     }
 }
