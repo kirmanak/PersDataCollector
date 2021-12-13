@@ -54,13 +54,13 @@ class CameraActivity : AppCompatActivity() {
     private fun takePhoto() {
         val recognizer = TextRecognition.getClient(TextRecognizerOptions.DEFAULT_OPTIONS)
         // Set up image capture listener, which is triggered after photo has been taken
-        val textIdImageCapturedCallback = TextIdImageCapturedCallback(recognizer)
-        textIdImageCapturedCallback.lastRecognitionResult.observe(this) {
+        val textCallback = TextRecognitionImageCaptureCallback(recognizer)
+        textCallback.result.observe(this) {
             Toast.makeText(this, it.toString(), Toast.LENGTH_SHORT).show()
         }
         imageCapture?.takePicture(
             ContextCompat.getMainExecutor(this),
-            textIdImageCapturedCallback,
+            textCallback,
         )
     }
 

@@ -5,7 +5,7 @@ import com.google.mlkit.vision.text.Text
 import com.google.mlkit.vision.text.TextRecognizer
 import timber.log.Timber
 
-class TextIdImageCapturedCallback(
+class TextRecognitionImageCaptureCallback(
     private val recognizer: TextRecognizer,
 ) : BaseImageCaptureCallback<Text>() {
 
