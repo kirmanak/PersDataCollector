@@ -14,9 +14,11 @@ import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.app.ActivityCompat.requestPermissions
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import com.example.testapp.databinding.ActivityCameraBinding
 import com.google.mlkit.vision.text.TextRecognition
 import com.google.mlkit.vision.text.latin.TextRecognizerOptions
+import kotlinx.coroutines.guava.await
 
 class CameraActivity : AppCompatActivity() {
     private var imageCapture: ImageCapture? = null
@@ -29,7 +31,7 @@ class CameraActivity : AppCompatActivity() {
 
         // Request camera permissions
         if (allPermissionsGranted()) {
-            startCamera()
+            lifecycleScope.launchWhenResumed { startCamera() }
         } else {
             requestPermissions(this, REQUIRED_PERMISSIONS, REQUEST_CODE_PERMISSIONS)
         }
@@ -45,7 +47,7 @@ class CameraActivity : AppCompatActivity() {
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == REQUEST_CODE_PERMISSIONS && grantResults.all { it == PERMISSION_GRANTED }) {
-            startCamera()
+            lifecycleScope.launchWhenResumed { startCamera() }
         }
     }
 
@@ -62,37 +64,28 @@ class CameraActivity : AppCompatActivity() {
         )
     }
 
-    private fun startCamera() {
+    private suspend fun startCamera() {
         val cameraProviderFuture = ProcessCameraProvider.getInstance(this)
+        // Used to bind the lifecycle of cameras to the lifecycle owner
+        val cameraProvider: ProcessCameraProvider = cameraProviderFuture.await()
 
-        cameraProviderFuture.addListener({
-            // Used to bind the lifecycle of cameras to the lifecycle owner
-            val cameraProvider: ProcessCameraProvider = cameraProviderFuture.get()
+        // Preview
+        val preview = Preview.Builder()
+            .build()
+            .apply { setSurfaceProvider(binding.viewFinder.surfaceProvider) }
 
-            // Preview
-            val preview = Preview.Builder()
-                .build()
-                .apply { setSurfaceProvider(binding.viewFinder.surfaceProvider) }
+        imageCapture = ImageCapture.Builder().build()
 
-            imageCapture = ImageCapture.Builder().build()
-
-            // Select back camera as a default
-            val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
-
-            try {
-                // Unbind use cases before rebinding
-                cameraProvider.unbindAll()
-
-                // Bind use cases to camera
-                cameraProvider.bindToLifecycle(
-                    this, cameraSelector, preview, imageCapture
-                )
-
-            } catch (exc: Exception) {
-                Log.e(TAG, "Use case binding failed", exc)
-            }
-
-        }, ContextCompat.getMainExecutor(this))
+        // Select back camera as a default
+        val cameraSelector = CameraSelector.DEFAULT_BACK_CAMERA
+        try {
+            // Unbind use cases before rebinding
+            cameraProvider.unbindAll()
+            // Bind use cases to camera
+            cameraProvider.bindToLifecycle(this, cameraSelector, preview, imageCapture)
+        } catch (exc: Exception) {
+            Log.e(TAG, "Use case binding failed", exc)
+        }
     }
 
     private fun allPermissionsGranted() = REQUIRED_PERMISSIONS.all { p ->

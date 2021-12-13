@@ -32,6 +32,9 @@ android {
     buildFeatures {
         viewBinding true
     }
+    packagingOptions {
+        resources.excludes += "DebugProbesKt.bin"
+    }
 }
 
 dependencies {
@@ -45,6 +48,15 @@ dependencies {
     implementation "androidx.camera:camera-view:1.0.0-alpha31"
 
     implementation "com.google.android.gms:play-services-mlkit-text-recognition:17.0.0"
+
+    def coroutines_version = "1.6.0-RC"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutines_version"
+    implementation "org.jetbrains.kotlinx:kotlinx-coroutines-guava:$coroutines_version"
+
+    def ktx_version = "2.4.0"
+    implementation "androidx.lifecycle:lifecycle-runtime-ktx:$ktx_version"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$ktx_version"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$ktx_version"
 
     implementation 'androidx.core:core-ktx:1.7.0'
     implementation 'androidx.appcompat:appcompat:1.4.0'
