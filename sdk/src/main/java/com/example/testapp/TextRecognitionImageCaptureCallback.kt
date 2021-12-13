@@ -11,6 +11,8 @@ class TextRecognitionImageCaptureCallback(
 
     override suspend fun processImage(image: InputImage): Result<Text> {
         Timber.v("processImage() called with: image = $image")
-        return runCatching { recognizer.process(image).await() }
+        val result = runCatching { recognizer.process(image).await() }
+        Timber.v("processImage() returned: $result")
+        return result
     }
 }

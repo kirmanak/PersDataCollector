@@ -11,6 +11,8 @@ class FaceDetectionImageCaptureCallback(
 
     override suspend fun processImage(image: InputImage): Result<List<Face>> {
         Timber.v("processImage() called with: image = $image")
-        return runCatching { faceDetector.process(image).await() }
+        val result = runCatching { faceDetector.process(image).await() }
+        Timber.v("processImage() returned: $result")
+        return result
     }
 }
