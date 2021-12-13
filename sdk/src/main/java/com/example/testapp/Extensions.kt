@@ -7,6 +7,7 @@ import androidx.fragment.app.Fragment
 import com.google.android.gms.tasks.Task
 import timber.log.Timber
 import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
 suspend fun Fragment.requestPermission(permission: String) = suspendCoroutine<Boolean> {
@@ -25,6 +26,6 @@ suspend fun Fragment.requestPermission(permission: String) = suspendCoroutine<Bo
 }
 
 suspend fun <T> Task<T>.await() = suspendCoroutine<T> { cont ->
-    addOnFailureListener { cont.resumeWith(Result.failure(it)) }
-    addOnSuccessListener { cont.resumeWith(Result.success(it)) }
+    addOnFailureListener { cont.resumeWithException(it) }
+    addOnSuccessListener { cont.resume(it) }
 }
