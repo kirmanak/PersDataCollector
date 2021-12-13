@@ -1,6 +1,8 @@
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
+    id 'dagger.hilt.android.plugin'
+    id 'kotlin-kapt'
 }
 
 android {
@@ -34,6 +36,14 @@ android {
     }
 }
 
+hilt {
+    enableAggregatingTask = true
+}
+
+kapt {
+    correctErrorTypes true
+}
+
 dependencies {
     implementation project(":sdk")
 
@@ -44,7 +54,8 @@ dependencies {
     implementation "androidx.constraintlayout:constraintlayout:2.1.2"
 
     //Feel free to add,remove or change dependencies as you wish
-
+    implementation "com.google.dagger:hilt-android:$hilt_version"
+    kapt "com.google.dagger:hilt-compiler:$hilt_version"
 
     testImplementation "junit:junit:4.13.2"
     androidTestImplementation "androidx.test.ext:junit:1.1.3"

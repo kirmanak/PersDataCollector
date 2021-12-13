@@ -1,8 +1,10 @@
 package com.example.testapp
 
 import android.app.Application
+import dagger.hilt.android.HiltAndroidApp
 import timber.log.Timber
 
+@HiltAndroidApp
 class HostApp : Application() {
     override fun onCreate() {
         super.onCreate()
