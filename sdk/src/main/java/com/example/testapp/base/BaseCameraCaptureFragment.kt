@@ -13,22 +13,22 @@ import androidx.camera.view.PreviewView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.testapp.requestPermission
-import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.guava.await
 import kotlinx.coroutines.launch
 import timber.log.Timber
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
-@AndroidEntryPoint
-abstract class BaseCameraCaptureFragment(@LayoutRes layoutId: Int) : Fragment(layoutId) {
+abstract class BaseCameraCaptureFragment<T>(@LayoutRes layoutId: Int) : Fragment(layoutId) {
 
     private var cameraExecutor: ExecutorService? = null
     private val imageCapture: ImageCapture by lazy { ImageCapture.Builder().build() }
     protected abstract val captureButton: Button
     protected abstract val previewView: PreviewView
-    protected abstract val captureCallback: ImageCapture.OnImageCapturedCallback
     protected abstract val cameraSelector: CameraSelector
+    protected abstract val captureCallback: BaseImageCaptureCallback<T>
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
@@ -37,10 +37,20 @@ abstract class BaseCameraCaptureFragment(@LayoutRes layoutId: Int) : Fragment(la
             else Timber.w("onViewCreated: camera permission denied")
         }
         captureButton.setOnClickListener { takePhoto() }
+        lifecycleScope.launch {
+            captureCallback.result.receiveAsFlow().collect(::onImageCaptured)
+        }
+    }
+
+    private suspend fun onImageCaptured(captureResult: Result<T>) {
+        Timber.v("onImageCaptured() called with: captureResult = $captureResult")
+        captureButton.isClickable = true
+        processImageCaptureResult(captureResult)
     }
 
     private fun takePhoto() {
         Timber.v("takePhoto() called")
+        captureButton.isClickable = false
         val executor = cameraExecutor ?: Executors.newSingleThreadExecutor()
         cameraExecutor = executor
         imageCapture.takePicture(executor, captureCallback)
@@ -69,4 +79,6 @@ abstract class BaseCameraCaptureFragment(@LayoutRes layoutId: Int) : Fragment(la
         cameraExecutor?.shutdownNow()
         cameraExecutor = null
     }
+
+    abstract suspend fun processImageCaptureResult(result: Result<T>)
 }
