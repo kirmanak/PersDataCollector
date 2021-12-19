@@ -22,13 +22,18 @@ class RetryDialogFragment : DialogFragment() {
         builder.setMessage(args.retryText)
             .setPositiveButton(R.string.btn_retry) { _, _ ->
                 Timber.d("onCreateDialog: positive click")
-                setFragmentResult(RETRY_REQUEST_KEY, bundleOf(ANSWER_KEY to true))
+                setResult(true)
             }
             .setNegativeButton(R.string.btn_no) { _, _ ->
                 Timber.d("onCreateDialog: negative click")
-                setFragmentResult(RETRY_REQUEST_KEY, bundleOf(ANSWER_KEY to false))
+                setResult(false)
             }
         return builder.create()
+    }
+
+    private fun setResult(result: Boolean) {
+        Timber.v("setResult() called with: result = $result")
+        setFragmentResult(RETRY_REQUEST_KEY, bundleOf(ANSWER_KEY to result))
     }
 
     companion object {
