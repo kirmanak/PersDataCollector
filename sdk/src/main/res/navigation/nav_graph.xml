@@ -1,13 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
-	xmlns:app="http://schemas.android.com/apk/res-auto"
 	android:id="@+id/nav_graph.xml"
 	xmlns:tools="http://schemas.android.com/tools"
-	app:startDestination="@id/textRecognitionFragment">
+	tools:ignore="InvalidNavigation">
 
 	<fragment
 		android:id="@+id/textRecognitionFragment"
 		tools:layout="@layout/fmt_text_recognition"
 		android:name="com.example.testapp.text.TextRecognitionFragment"
 		android:label="TextRecognitionFragment" />
+	<fragment
+		android:id="@+id/faceDetectionFragment"
+		android:name="com.example.testapp.face.FaceDetectionFragment"
+		android:label="FaceDetectionFragment"
+		tools:layout="@layout/fmt_face_detection" />
 </navigation>

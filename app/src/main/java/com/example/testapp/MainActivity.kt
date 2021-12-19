@@ -15,11 +15,11 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         binding.btnReadText.setOnClickListener {
-            CameraActivity.start(this)
+            CameraActivity.start(this, CameraActivity.DetectionMode.TEXT)
         }
 
         binding.btnDetectFace.setOnClickListener {
-            CameraActivity.start(this)
+            CameraActivity.start(this, CameraActivity.DetectionMode.FACE)
         }
     }
 }
