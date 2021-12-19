@@ -8,6 +8,6 @@
 	<fragment
 		android:id="@+id/textRecognitionFragment"
 		tools:layout="@layout/fmt_text_recognition"
-		android:name="com.example.testapp.TextRecognitionFragment"
+		android:name="com.example.testapp.text.TextRecognitionFragment"
 		android:label="TextRecognitionFragment" />
 </navigation>
