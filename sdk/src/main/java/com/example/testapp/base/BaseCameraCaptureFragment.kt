@@ -10,10 +10,12 @@ import androidx.camera.core.ImageCapture
 import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
+import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import com.example.testapp.requestPermission
-import kotlinx.coroutines.flow.collect
+import com.google.android.material.progressindicator.CircularProgressIndicator
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.guava.await
 import kotlinx.coroutines.launch
@@ -25,8 +27,11 @@ abstract class BaseCameraCaptureFragment<T>(@LayoutRes layoutId: Int) : Fragment
 
     private var cameraExecutor: ExecutorService? = null
     private val imageCapture: ImageCapture by lazy { ImageCapture.Builder().build() }
+
     protected abstract val captureButton: Button
     protected abstract val previewView: PreviewView
+    protected abstract val progress: CircularProgressIndicator
+
     protected abstract val cameraSelector: CameraSelector
     protected abstract val captureCallback: BaseImageCaptureCallback<T>
 
@@ -36,23 +41,28 @@ abstract class BaseCameraCaptureFragment<T>(@LayoutRes layoutId: Int) : Fragment
             if (requestPermission(Manifest.permission.CAMERA)) startCamera()
             else Timber.w("onViewCreated: camera permission denied")
         }
-        captureButton.setOnClickListener { takePhoto() }
-        lifecycleScope.launch {
-            captureCallback.result.receiveAsFlow().collect(::onImageCaptured)
-        }
+        captureButton.setOnClickListener { captureImage() }
     }
 
     private suspend fun onImageCaptured(captureResult: Result<T>) {
         Timber.v("onImageCaptured() called with: captureResult = $captureResult")
         captureButton.isClickable = true
+        progress.isVisible = false
         processImageCaptureResult(captureResult)
     }
 
-    private fun takePhoto() {
-        Timber.v("takePhoto() called")
+    private fun captureImage() {
+        Timber.v("captureImage() called")
         captureButton.isClickable = false
-        val executor = cameraExecutor ?: Executors.newSingleThreadExecutor()
-        cameraExecutor = executor
+        progress.isVisible = true
+        val executor = cameraExecutor ?: run {
+            val newExecutor = Executors.newSingleThreadExecutor()
+            cameraExecutor = newExecutor
+            newExecutor
+        }
+        lifecycleScope.launch {
+            onImageCaptured(captureCallback.result.receiveAsFlow().first())
+        }
         imageCapture.takePicture(executor, captureCallback)
     }
 

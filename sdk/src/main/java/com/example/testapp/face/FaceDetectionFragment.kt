@@ -1,15 +1,12 @@
 package com.example.testapp.face
 
 import android.app.Activity
-import android.widget.Button
 import androidx.camera.core.CameraSelector
-import androidx.camera.view.PreviewView
 import androidx.navigation.fragment.findNavController
 import by.kirich1409.viewbindingdelegate.viewBinding
 import com.example.testapp.FaceDetectionResultContract
 import com.example.testapp.R
 import com.example.testapp.base.BaseCameraCaptureFragment
-import com.example.testapp.base.BaseImageCaptureCallback
 import com.example.testapp.databinding.FmtFaceDetectionBinding
 import com.example.testapp.retry.RetryDialogFragment.Companion.retryDialogResult
 import com.google.mlkit.vision.face.Face
@@ -23,12 +20,11 @@ class FaceDetectionFragment : BaseCameraCaptureFragment<List<Face>>(R.layout.fmt
     @Inject
     lateinit var faceDetectionCallback: FaceDetectionImageCaptureCallback
     private val binding by viewBinding(FmtFaceDetectionBinding::bind)
-    override val captureButton: Button get() = binding.cameraCaptureButton
-    override val previewView: PreviewView get() = binding.viewFinder
-    override val captureCallback: BaseImageCaptureCallback<List<Face>>
-        get() = faceDetectionCallback
-
-    override val cameraSelector: CameraSelector = CameraSelector.DEFAULT_FRONT_CAMERA
+    override val progress get() = binding.progress
+    override val captureButton get() = binding.cameraCaptureButton
+    override val previewView get() = binding.viewFinder
+    override val captureCallback get() = faceDetectionCallback
+    override val cameraSelector by lazy { CameraSelector.DEFAULT_FRONT_CAMERA }
 
     override suspend fun processImageCaptureResult(result: Result<List<Face>>) {
         val facesList = result.getOrDefault(emptyList())

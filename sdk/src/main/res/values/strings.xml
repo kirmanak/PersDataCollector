@@ -2,4 +2,6 @@
 <resources>
 	<string name="btn_retry">Try again</string>
 	<string name="btn_no">No</string>
+	<string name="btn_capture_face">Capture face</string>
+	<string name="btn_capture_text">Capture text</string>
 </resources>
