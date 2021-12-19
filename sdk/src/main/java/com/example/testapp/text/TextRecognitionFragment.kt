@@ -9,13 +9,12 @@ import com.example.testapp.TextRecognitionResultContract
 import com.example.testapp.base.BaseCameraCaptureFragment
 import com.example.testapp.databinding.FmtTextRecognitionBinding
 import com.example.testapp.retry.RetryDialogFragment.Companion.retryDialogResult
-import com.google.mlkit.vision.text.Text
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class TextRecognitionFragment : BaseCameraCaptureFragment<Text>(R.layout.fmt_text_recognition) {
+class TextRecognitionFragment : BaseCameraCaptureFragment<String>(R.layout.fmt_text_recognition) {
 
     @Inject
     lateinit var textRecognitionCallback: TextRecognitionImageCaptureCallback
@@ -26,10 +25,10 @@ class TextRecognitionFragment : BaseCameraCaptureFragment<Text>(R.layout.fmt_tex
     override val cameraSelector by lazy { CameraSelector.DEFAULT_BACK_CAMERA }
     override val captureCallback get() = textRecognitionCallback
 
-    override suspend fun processImageCaptureResult(result: Result<Text>) {
-        val text = result.getOrNull()?.text?.takeUnless { it.isBlank() }.orEmpty()
-        if (text.isEmpty()) {
-            val retryText = "The picture doesn't contain any text. Do you want to try again?"
+    override suspend fun processImageCaptureResult(result: Result<String>) {
+        val exception = result.exceptionOrNull()
+        if (exception != null) {
+            val retryText = "${exception.message}. Do you want to try again?"
             findNavController().navigate(TextRecognitionFragmentDirections.textToRetry(retryText))
             if (retryDialogResult()) {
                 Timber.d("processImageCaptureResult: user wants to retry")
@@ -37,7 +36,7 @@ class TextRecognitionFragment : BaseCameraCaptureFragment<Text>(R.layout.fmt_tex
             }
         }
 
-        val resultsIntent = TextRecognitionResultContract.createResult(text)
+        val resultsIntent = TextRecognitionResultContract.createResult(result.getOrNull())
         with(requireActivity()) {
             setResult(Activity.RESULT_OK, resultsIntent)
             finish()
