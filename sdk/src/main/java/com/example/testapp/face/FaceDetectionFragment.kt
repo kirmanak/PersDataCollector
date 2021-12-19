@@ -9,13 +9,13 @@ import com.example.testapp.R
 import com.example.testapp.base.BaseCameraCaptureFragment
 import com.example.testapp.databinding.FmtFaceDetectionBinding
 import com.example.testapp.retry.RetryDialogFragment.Companion.retryDialogResult
-import com.google.mlkit.vision.face.Face
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
+import java.io.File
 import javax.inject.Inject
 
 @AndroidEntryPoint
-class FaceDetectionFragment : BaseCameraCaptureFragment<List<Face>>(R.layout.fmt_face_detection) {
+class FaceDetectionFragment : BaseCameraCaptureFragment<File>(R.layout.fmt_face_detection) {
 
     @Inject
     lateinit var faceDetectionCallback: FaceDetectionImageCaptureCallback
@@ -26,12 +26,10 @@ class FaceDetectionFragment : BaseCameraCaptureFragment<List<Face>>(R.layout.fmt
     override val captureCallback get() = faceDetectionCallback
     override val cameraSelector by lazy { CameraSelector.DEFAULT_FRONT_CAMERA }
 
-    override suspend fun processImageCaptureResult(result: Result<List<Face>>) {
-        val facesList = result.getOrDefault(emptyList())
-        val size = facesList.size
-        if (size != 1) {
-            val text = "The picture contains $size faces, but one was expected." +
-                    " Do you want to try again?"
+    override suspend fun processImageCaptureResult(result: Result<File>) {
+        val exception = result.exceptionOrNull()
+        if (exception != null) {
+            val text = "${exception.message}. Do you want to try again?"
             findNavController().navigate(FaceDetectionFragmentDirections.faceToRetry(text))
             if (retryDialogResult()) {
                 Timber.d("processImageCaptureResult: user wants to try again")
@@ -39,7 +37,7 @@ class FaceDetectionFragment : BaseCameraCaptureFragment<List<Face>>(R.layout.fmt
             }
         }
 
-        val resultsIntent = FaceDetectionResultContract.createResult(size)
+        val resultsIntent = FaceDetectionResultContract.createResult(result.getOrNull())
         with(requireActivity()) {
             setResult(Activity.RESULT_OK, resultsIntent)
             finish()
