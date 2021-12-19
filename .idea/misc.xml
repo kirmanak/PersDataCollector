@@ -7,6 +7,7 @@
         <entry key="sdk/src/main/res/layout/activity_camera.xml" value="0.3640625" />
         <entry key="sdk/src/main/res/layout/fmt_face_detection.xml" value="0.23072916666666668" />
         <entry key="sdk/src/main/res/layout/fmt_face_recognition.xml" value="0.11458333333333333" />
+        <entry key="sdk/src/main/res/layout/fmt_retry.xml" value="0.23072916666666668" />
         <entry key="sdk/src/main/res/layout/fmt_text_recognition.xml" value="0.3640625" />
       </map>
     </option>

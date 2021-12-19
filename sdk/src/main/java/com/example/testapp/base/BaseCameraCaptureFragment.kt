@@ -1,4 +1,4 @@
-package com.example.testapp
+package com.example.testapp.base
 
 import android.Manifest
 import android.os.Bundle
@@ -12,6 +12,7 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.camera.view.PreviewView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import com.example.testapp.requestPermission
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.guava.await
 import kotlinx.coroutines.launch

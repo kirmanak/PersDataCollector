@@ -1,6 +1,6 @@
 package com.example.testapp.face
 
-import com.example.testapp.BaseImageCaptureCallback
+import com.example.testapp.base.BaseImageCaptureCallback
 import com.example.testapp.await
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.face.Face

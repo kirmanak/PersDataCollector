@@ -1,17 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <navigation xmlns:android="http://schemas.android.com/apk/res/android"
+	xmlns:app="http://schemas.android.com/apk/res-auto"
 	android:id="@+id/nav_graph.xml"
 	xmlns:tools="http://schemas.android.com/tools"
+	app:startDestination="@id/retryDialogFragment"
 	tools:ignore="InvalidNavigation">
 
 	<fragment
 		android:id="@+id/textRecognitionFragment"
 		tools:layout="@layout/fmt_text_recognition"
 		android:name="com.example.testapp.text.TextRecognitionFragment"
-		android:label="TextRecognitionFragment" />
+		android:label="TextRecognitionFragment">
+		<action
+			android:id="@+id/text_to_retry"
+			app:destination="@id/retryDialogFragment" />
+	</fragment>
 	<fragment
 		android:id="@+id/faceDetectionFragment"
 		android:name="com.example.testapp.face.FaceDetectionFragment"
 		android:label="FaceDetectionFragment"
-		tools:layout="@layout/fmt_face_detection" />
+		tools:layout="@layout/fmt_face_detection">
+		<action
+			android:id="@+id/face_to_retry"
+			app:destination="@id/retryDialogFragment" />
+	</fragment>
+	<dialog
+		android:id="@+id/retryDialogFragment"
+		android:name="com.example.testapp.retry.RetryDialogFragment"
+		android:label="RetryDialogFragment">
+		<argument
+			android:name="retry_text"
+			app:argType="string" />
+	</dialog>
 </navigation>
