@@ -1,7 +1,5 @@
 package com.example.testapp
 
-import android.content.Context
-import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
@@ -38,13 +36,7 @@ class CameraActivity : AppCompatActivity() {
     }
 
     companion object {
-        private const val DETECTION_MODE_EXTRA = "DETECTION_MODE_EXTRA"
-
-        fun start(context: Context, detectionMode: DetectionMode) {
-            val intent = Intent(context, CameraActivity::class.java)
-            intent.putExtra(DETECTION_MODE_EXTRA, detectionMode)
-            context.startActivity(intent)
-        }
+        const val DETECTION_MODE_EXTRA = "DETECTION_MODE_EXTRA"
     }
 
     enum class DetectionMode { FACE, TEXT }

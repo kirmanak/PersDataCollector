@@ -4,6 +4,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.testapp.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
+import timber.log.Timber
 
 @AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
@@ -14,12 +15,13 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        binding.btnReadText.setOnClickListener {
-            CameraActivity.start(this, CameraActivity.DetectionMode.TEXT)
+        val textLauncher = registerForActivityResult(TextRecognitionResultContract()) {
+            Timber.d("onCreate: received text: $it")
         }
-
-        binding.btnDetectFace.setOnClickListener {
-            CameraActivity.start(this, CameraActivity.DetectionMode.FACE)
+        val faceLauncher = registerForActivityResult(FaceDetectionResultContract()) {
+            Timber.d("onCreate: received $it faces")
         }
+        binding.btnReadText.setOnClickListener { textLauncher.launch(Unit) }
+        binding.btnDetectFace.setOnClickListener { faceLauncher.launch(Unit) }
     }
 }
