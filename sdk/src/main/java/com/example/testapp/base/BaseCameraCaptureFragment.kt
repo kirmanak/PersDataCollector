@@ -1,6 +1,8 @@
 package com.example.testapp.base
 
 import android.Manifest
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
@@ -13,7 +15,10 @@ import androidx.camera.view.PreviewView
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
+import androidx.navigation.NavDirections
+import androidx.navigation.fragment.findNavController
 import com.example.testapp.requestPermission
+import com.example.testapp.retry.RetryDialogFragment.Companion.retryDialogResult
 import com.google.android.material.progressindicator.CircularProgressIndicator
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.receiveAsFlow
@@ -48,8 +53,24 @@ abstract class BaseCameraCaptureFragment<T>(@LayoutRes layoutId: Int) : Fragment
         Timber.v("onImageCaptured() called with: captureResult = $captureResult")
         captureButton.isClickable = true
         progress.isVisible = false
-        processImageCaptureResult(captureResult)
+
+        val wantToRetry = captureResult.exceptionOrNull()?.let {
+            val text = "${it.message}. Do you want to try again?"
+            findNavController().navigate(retryDirection(text))
+            retryDialogResult()
+        } ?: false
+
+        if (!wantToRetry) {
+            with(requireActivity()) {
+                setResult(Activity.RESULT_OK, createResultsIntent(captureResult.getOrNull()))
+                finish()
+            }
+        }
     }
+
+    abstract fun retryDirection(text: String): NavDirections
+
+    abstract fun createResultsIntent(data: T?): Intent
 
     private fun captureImage() {
         Timber.v("captureImage() called")
@@ -89,6 +110,4 @@ abstract class BaseCameraCaptureFragment<T>(@LayoutRes layoutId: Int) : Fragment
         cameraExecutor?.shutdownNow()
         cameraExecutor = null
     }
-
-    abstract suspend fun processImageCaptureResult(result: Result<T>)
 }
