@@ -10,7 +10,12 @@ import org.junit.runner.RunWith
 import org.robolectric.annotation.Config
 
 @HiltAndroidTest
-@Config(application = HiltTestApplication_Application::class)
+@Config(
+    application = HiltTestApplication_Application::class, instrumentedPackages = [
+        // required to access final members on androidx.loader.content.ModernAsyncTask
+        "androidx.loader.content"
+    ]
+)
 @RunWith(AndroidJUnit4::class)
 abstract class BaseTest {
 

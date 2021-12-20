@@ -1,10 +1,7 @@
 package com.example.testapp
 
-import android.app.Activity
 import android.content.Context
-import androidx.activity.result.contract.ActivityResultContract
 import androidx.navigation.findNavController
-import androidx.test.core.app.ActivityScenario
 import com.example.testapp.face.FaceDetectionModule
 import com.example.testapp.text.TextRecognitionModule
 import com.google.mlkit.vision.face.FaceDetector
@@ -54,11 +51,4 @@ class CameraActivityTest : BaseTest() {
         }
     }
 
-    private inline fun <I, O, A : Activity> ActivityResultContract<I, O>.onActivity(
-        input: I, crossinline block: A.() -> Unit
-    ) {
-        ActivityScenario.launch<A>(createIntent(context, input)).use { scenario ->
-            scenario.onActivity { block(it) }
-        }
-    }
 }
