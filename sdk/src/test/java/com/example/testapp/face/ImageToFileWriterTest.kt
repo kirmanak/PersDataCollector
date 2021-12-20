@@ -37,5 +37,5 @@ class ImageToFileWriterTest : BaseTest() {
         format: Bitmap.CompressFormat = Bitmap.CompressFormat.JPEG,
         quality: Int = 100,
         prefix: String = "face_"
-    ) = ImageToFileWriter.ImageToFileWriterConfig(format, quality, prefix)
+    ) = ImageToFileWriter.Config(format, quality, prefix)
 }
