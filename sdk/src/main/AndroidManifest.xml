@@ -5,4 +5,12 @@
 	<uses-feature android:name="android.hardware.camera.any" />
 	<uses-permission android:name="android.permission.CAMERA" />
 
+	<application>
+
+		<meta-data
+			android:name="com.google.mlkit.vision.DEPENDENCIES"
+			android:value="ocr,face" />
+
+		<activity android:name=".CameraActivity" />
+	</application>
 </manifest>
