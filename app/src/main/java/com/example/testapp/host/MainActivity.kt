@@ -1,9 +1,11 @@
-package com.example.testapp
+package com.example.testapp.host
 
 import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import com.example.testapp.databinding.ActivityMainBinding
+import com.example.testapp.FaceDetectionResultContract
+import com.example.testapp.TextRecognitionResultContract
+import com.example.testapp.host.databinding.ActivityMainBinding
 import dagger.hilt.android.AndroidEntryPoint
 import timber.log.Timber
 
