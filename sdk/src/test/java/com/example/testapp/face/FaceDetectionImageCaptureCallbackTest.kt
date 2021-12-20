@@ -1,9 +1,10 @@
 package com.example.testapp.face
 
-import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import com.example.testapp.BaseTest
 import com.google.android.gms.tasks.Tasks
 import com.google.mlkit.vision.common.InputImage
+import com.google.mlkit.vision.face.Face
 import com.google.mlkit.vision.face.FaceDetector
 import dagger.hilt.android.testing.BindValue
 import dagger.hilt.android.testing.HiltAndroidTest
@@ -37,25 +38,21 @@ class FaceDetectionImageCaptureCallbackTest : BaseTest() {
 
     @Test
     fun `when process zero faces then fails`() {
-        every { faceDetector.process(any<InputImage>()) } returns Tasks.forResult(emptyList())
+        every { faceDetector.process(any<InputImage>()) } returns Tasks.forResult(listOfFaces(0))
         val actual = runBlocking { subject.processImage(image) }
         assertTrue(actual.isFailure)
     }
 
     @Test
     fun `when process two faces then throws`() {
-        every { faceDetector.process(any<InputImage>()) } returns Tasks.forResult(
-            listOf(mockk(relaxed = true), mockk(relaxed = true))
-        )
+        every { faceDetector.process(any<InputImage>()) } returns Tasks.forResult(listOfFaces(2))
         val actual = runBlocking { subject.processImage(image) }
         assertTrue(actual.isFailure)
     }
 
     @Test
     fun `when process one face then returns success`() {
-        every { faceDetector.process(any<InputImage>()) } returns Tasks.forResult(
-            listOf(mockk(relaxed = true))
-        )
+        every { faceDetector.process(any<InputImage>()) } returns Tasks.forResult(listOfFaces(1))
         val actual = runBlocking { subject.processImage(image) }
         assertTrue(actual.isSuccess)
     }
@@ -69,10 +66,8 @@ class FaceDetectionImageCaptureCallbackTest : BaseTest() {
 
     @Test
     fun `when process image with one face then calls image writer`() {
-        every { faceDetector.process(any<InputImage>()) } returns Tasks.forResult(
-            listOf(mockk(relaxed = true))
-        )
-        val bitmap = mockk<Bitmap>()
+        every { faceDetector.process(any<InputImage>()) } returns Tasks.forResult(listOfFaces(1))
+        val bitmap = BitmapFactory.decodeFile("test")
         every { image.bitmapInternal } returns bitmap
         runBlocking { subject.processImage(image) }
         coVerify { writer.writeImageToTempFile(bitmap) }
@@ -81,12 +76,12 @@ class FaceDetectionImageCaptureCallbackTest : BaseTest() {
 
     @Test
     fun `when process image with one face then returns file from writer`() {
-        every { faceDetector.process(any<InputImage>()) } returns Tasks.forResult(
-            listOf(mockk(relaxed = true))
-        )
-        val file = mockk<File>()
+        every { faceDetector.process(any<InputImage>()) } returns Tasks.forResult(listOfFaces(1))
+        val file = File("test")
         coEvery { writer.writeImageToTempFile(any()) } returns file
         val actual = runBlocking { subject.processImage(image) }
         assertSame(file, actual.getOrNull())
     }
+
+    private fun listOfFaces(size: Int): List<Face> = MutableList(size) { mockk(relaxed = true) }
 }
