@@ -1,9 +1,9 @@
 package com.example.testapp.face
 
-import com.example.testapp.await
 import com.example.testapp.base.BaseImageCaptureCallback
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.face.FaceDetector
+import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 import java.io.File
 import javax.inject.Inject

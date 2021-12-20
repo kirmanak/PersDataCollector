@@ -1,9 +1,9 @@
 package com.example.testapp.text
 
-import com.example.testapp.await
 import com.example.testapp.base.BaseImageCaptureCallback
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognizer
+import kotlinx.coroutines.tasks.await
 import timber.log.Timber
 import javax.inject.Inject
 import javax.inject.Singleton
