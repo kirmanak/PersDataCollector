@@ -1,5 +1,6 @@
 package com.example.testapp.face
 
+import android.graphics.Bitmap
 import com.google.mlkit.vision.face.FaceDetection
 import com.google.mlkit.vision.face.FaceDetectorOptions
 import dagger.Module
@@ -21,4 +22,12 @@ object FaceDetectionModule {
     fun provideFaceDetectorOptions() = FaceDetectorOptions.Builder()
         .setPerformanceMode(FaceDetectorOptions.PERFORMANCE_MODE_ACCURATE)
         .build()
+
+    @Provides
+    @Singleton
+    fun provideImageToFileWriterConfig() = ImageToFileWriter.ImageToFileWriterConfig(
+        format = Bitmap.CompressFormat.JPEG,
+        quality = 100,
+        prefix = "face"
+    )
 }
