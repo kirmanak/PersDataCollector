@@ -25,7 +25,7 @@ object FaceDetectionModule {
 
     @Provides
     @Singleton
-    fun provideImageToFileWriterConfig() = ImageToFileWriter.ImageToFileWriterConfig(
+    fun provideImageToFileWriterConfig() = ImageToFileWriter.Config(
         format = Bitmap.CompressFormat.JPEG,
         quality = 100,
         prefix = "face"

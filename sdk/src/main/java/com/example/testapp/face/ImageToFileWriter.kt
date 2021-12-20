@@ -10,7 +10,7 @@ import javax.inject.Singleton
 
 @Singleton
 class ImageToFileWriter @Inject constructor(
-    private val config: ImageToFileWriterConfig,
+    private val config: Config,
 ) {
 
     suspend fun writeImageToTempFile(image: Bitmap): File = withContext(Dispatchers.IO) {
@@ -22,7 +22,7 @@ class ImageToFileWriter @Inject constructor(
         }
     }
 
-    data class ImageToFileWriterConfig(
+    data class Config(
         val format: Bitmap.CompressFormat,
         val quality: Int,
         val prefix: String
